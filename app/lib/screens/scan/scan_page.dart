@@ -21,8 +21,8 @@ class _ScanPageState extends State<ScanPage> {
       final barcode = barcodes.first.displayValue ?? barcodes.first.rawValue;
       if (barcode != null) {
         _isScanned = true;
-        // Remplace la page de scan par la page produit
-        context.pushReplacement('/product', extra: barcode);
+        // Retourne le code-barres à la page d'accueil pour maîtriser le rafraîchissement
+        context.pop(barcode);
       }
     }
   }

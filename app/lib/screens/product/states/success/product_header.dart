@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:formation_flutter/model/product.dart';
+import 'package:formation_flutter/res/app_colors.dart';
 import 'package:formation_flutter/res/app_theme_extension.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -126,8 +127,15 @@ class ProductNameHeader extends StatelessWidget {
               const SizedBox(height: 3.0),
               Text(
                 product.brands?.join(', ') ?? '-',
-                style: context.theme.title2,
+                style: context.theme.title2.copyWith(color: AppColors.grey2),
               ),
+              if (product.altName != null && product.altName!.isNotEmpty) ...[
+                const SizedBox(height: 8.0),
+                Text(
+                  product.altName!,
+                  style: context.theme.title3.copyWith(color: AppColors.grey3), // Typographie grise légère
+                ),
+              ],
               const SizedBox(height: 8.0),
             ],
           ),

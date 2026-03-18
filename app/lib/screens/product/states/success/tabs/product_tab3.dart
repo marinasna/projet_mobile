@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:formation_flutter/l10n/app_localizations.dart';
 import 'package:formation_flutter/model/product.dart';
 import 'package:formation_flutter/res/app_colors.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ProductTab3 extends StatelessWidget {
@@ -11,181 +9,105 @@ class ProductTab3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Product product = context.read<Product>();
-    if (product.nutritionFacts == null) {
-      return const SizedBox.shrink();
+    final nutrition = product.nutritionFacts;
+
+    if (nutrition == null) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text('Tableau nutritionnel indisponible'),
+        ),
+      );
     }
 
-    return DefaultTextStyle.merge(
-      style: TextStyle(color: AppColors.blue),
-      child: Table(
-        border: TableBorder.symmetric(
-          inside: BorderSide(color: AppColors.blue),
-        ),
-        columnWidths: const <int, TableColumnWidth>{
-          0: FlexColumnWidth(3),
-          1: FlexColumnWidth(2),
-          2: FlexColumnWidth(2),
-        },
-        children: _body(context, product.nutritionFacts!),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: const [
+              Expanded(flex: 5, child: SizedBox()),
+              Expanded(
+                flex: 2, 
+                child: Text('Pour 100g', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12), textAlign: TextAlign.right)
+              ),
+              Expanded(
+                flex: 2, 
+                child: Text('Par part', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12), textAlign: TextAlign.right)
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          const Divider(),
+          _buildTableRow('Énergie', nutrition.energy, isIndented: false),
+          const Divider(),
+          _buildTableRow('Matières grasses', nutrition.fat, isIndented: false),
+          const Divider(),
+          _buildTableRow('dont Acides gras saturés', nutrition.saturatedFat, isIndented: true),
+          const Divider(),
+          _buildTableRow('Glucides', nutrition.carbohydrate, isIndented: false),
+          const Divider(),
+          _buildTableRow('dont Sucres', nutrition.sugar, isIndented: true),
+          const Divider(),
+          _buildTableRow('Fibres alimentaires', nutrition.fiber, isIndented: false),
+          const Divider(),
+          _buildTableRow('Protéines', nutrition.proteins, isIndented: false),
+          const Divider(),
+          _buildTableRow('Sel', nutrition.salt, isIndented: false),
+          const Divider(),
+          _buildTableRow('Sodium', nutrition.sodium, isIndented: false),
+        ],
       ),
     );
   }
 
-  List<TableRow> _body(BuildContext context, NutritionFacts nutritionFacts) {
-    final AppLocalizations localizations = AppLocalizations.of(context)!;
-    final NumberFormat numberFormat = NumberFormat.decimalPatternDigits(
-      locale: Localizations.localeOf(context).countryCode,
-      decimalDigits: 1,
-    );
+  Widget _buildTableRow(String label, Nutriment? nutriment, {bool isIndented = false}) {
+    final per100g = nutriment != null && nutriment.per100g != null 
+        ? '${nutriment.per100g} ${nutriment.unit}' 
+        : '?';
+    
+    final perServing = nutriment != null && nutriment.perServing != null 
+        ? '${nutriment.perServing} ${nutriment.unit}' 
+        : '?';
 
-    final List<TableRow?> rows = <TableRow?>[];
-
-    rows.add(
-      TableRow(
-        children: <Widget>[
-          TableCell(child: SizedBox.shrink()),
-          _NutritionFactsValue(
-            text: localizations.product_nutrition_facts_per_100g,
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 8.0, 
+        bottom: 8.0, 
+        left: isIndented ? 20.0 : 0.0
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: AppColors.blue,
+                fontWeight: isIndented ? FontWeight.normal : FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
           ),
-          _NutritionFactsValue(
-            text: localizations.product_nutrition_facts_per_serving,
+          Expanded(
+            flex: 2,
+            child: Text(
+              per100g,
+              textAlign: TextAlign.right,
+              style: const TextStyle(color: AppColors.grey3, fontSize: 13),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              perServing,
+              textAlign: TextAlign.right,
+              style: const TextStyle(color: AppColors.grey3, fontSize: 13),
+            ),
           ),
         ],
       ),
     );
-
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_energy,
-        nutritionFacts.energy,
-      ),
-    );
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_fat,
-        nutritionFacts.fat,
-      ),
-    );
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_saturated_fats,
-        nutritionFacts.saturatedFat,
-      ),
-    );
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_carbohydrates,
-        nutritionFacts.carbohydrate,
-      ),
-    );
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_sugars,
-        nutritionFacts.sugar,
-      ),
-    );
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_fiber,
-        nutritionFacts.fiber,
-      ),
-    );
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_proteins,
-        nutritionFacts.proteins,
-      ),
-    );
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_salt,
-        nutritionFacts.salt,
-      ),
-    );
-    rows.add(
-      _generateCell(
-        numberFormat,
-        localizations.product_nutrition_facts_sodium,
-        nutritionFacts.sodium,
-      ),
-    );
-
-    return rows.nonNulls.toList(growable: false);
-  }
-
-  TableRow? _generateCell(
-    NumberFormat numberFormat,
-    String label,
-    Nutriment? nutriment,
-  ) {
-    if (nutriment == null) {
-      return null;
-    }
-
-    String formatField(dynamic field, String unit) {
-      if (field == null) {
-        return '-';
-      } else if (field is num) {
-        return '${numberFormat.format(field)} $unit';
-      } else {
-        return '$field $unit';
-      }
-    }
-
-    return TableRow(
-      children: <Widget>[
-        _NutritionFactsTitle(text: label),
-        _NutritionFactsValue(
-          text: formatField(nutriment.per100g, nutriment.unit),
-        ),
-        _NutritionFactsValue(
-          text: formatField(nutriment.perServing, nutriment.unit),
-        ),
-      ],
-    );
   }
 }
-
-class _NutritionFactsValue extends StatelessWidget {
-  const _NutritionFactsValue({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 4.0,
-        vertical: 6.0,
-      ),
-      child: Text(text, textAlign: TextAlign.center),
-    );
-  }
-}
-
-class _NutritionFactsTitle extends StatelessWidget {
-  const _NutritionFactsTitle({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 4.0,
-        vertical: 6.0,
-      ),
-      child: Text(text, style: const TextStyle(fontWeight: FontWeight.w600)),
-    );
-  }
-}
-
-extension ProductNutrimentsExtension on Product {}

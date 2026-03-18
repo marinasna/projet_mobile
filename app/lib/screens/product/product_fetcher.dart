@@ -13,6 +13,8 @@ class ProductFetcher extends ChangeNotifier {
 
   final String _barcode;
   ProductFetcherState _state;
+  bool isFavorite = false;
+  String? _recordId;
 
   Future<void> loadProduct() async {
     _state = ProductFetcherLoading();
@@ -39,6 +41,7 @@ class ProductFetcher extends ChangeNotifier {
               'barcode': product.barcode,
               'name': product.name ?? 'Unknown',
               'nutriscore': product.nutriScore?.name ?? '',
+              'is_favorite': false,
             };
             
             if (product.picture != null && product.picture!.isNotEmpty) {
@@ -46,9 +49,14 @@ class ProductFetcher extends ChangeNotifier {
             }
             
             final record = await pb.collection('scans').create(body: bodyData);
+            _recordId = record.id;
+            isFavorite = false;
             print('[PocketBase] saved scan record: ${record.id}');
           } else {
-            print('[PocketBase] product already in history, skipping save');
+            final record = existing.items.first;
+            _recordId = record.id;
+            isFavorite = record.getBoolValue('is_favorite', false);
+            print('[PocketBase] product already in history, skipping save. is_favorite: $isFavorite');
           }
         } else {
           print('[PocketBase] warning: user not authenticated, skipping save');
@@ -66,6 +74,26 @@ class ProductFetcher extends ChangeNotifier {
       print('[ProductFetcher] error: $error');
       _state = ProductFetcherError(error);
     } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> toggleFavorite() async {
+    if (_recordId == null) return;
+    
+    // Inverser l'état local immédiatement
+    isFavorite = !isFavorite;
+    notifyListeners();
+
+    try {
+      await pb.collection('scans').update(_recordId!, body: {
+        'is_favorite': isFavorite,
+      });
+      print('[PocketBase] favorite toggled to: $isFavorite for $_recordId');
+    } catch (e) {
+      print('[PocketBase] error updating favorite: $e');
+      // Annuler en cas d'erreur
+      isFavorite = !isFavorite;
       notifyListeners();
     }
   }

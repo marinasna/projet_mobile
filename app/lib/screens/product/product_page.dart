@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:formation_flutter/res/app_icons.dart';
 import 'package:formation_flutter/screens/product/product_fetcher.dart';
 import 'package:formation_flutter/screens/product/states/empty/product_page_empty.dart';
@@ -46,9 +47,24 @@ class ProductPage extends StatelessWidget {
             PositionedDirectional(
               top: 0.0,
               end: 0.0,
-              child: _HeaderIcon(
-                icon: AppIcons.share,
-                tooltip: materialLocalizations.shareButtonLabel,
+              child: Consumer<ProductFetcher>(
+                builder: (context, notifier, _) {
+                  if (notifier.isFavorite) {
+                    return _HeaderSvgIcon(
+                      svgAsset: 'res/svg/icons8-star-full.svg',
+                      tooltip: 'Retirer des favoris',
+                      color: Colors.white,
+                      onPressed: notifier.toggleFavorite,
+                    );
+                  } else {
+                    return _HeaderSvgIcon(
+                      svgAsset: 'res/svg/Shape.svg',
+                      tooltip: 'Favori',
+                      color: Colors.white,
+                      onPressed: notifier.toggleFavorite,
+                    );
+                  }
+                },
               ),
             ),
           ],
@@ -85,12 +101,12 @@ class _HeaderIcon extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.0),
                 ),
                 child: DecoratedBox(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black26,
                         blurRadius: 10.0,
-                        offset: const Offset(0.0, 0.0),
+                        offset: Offset(0.0, 0.0),
                       ),
                     ],
                   ),
@@ -104,3 +120,61 @@ class _HeaderIcon extends StatelessWidget {
     );
   }
 }
+
+class _HeaderSvgIcon extends StatelessWidget {
+  const _HeaderSvgIcon({
+    required this.svgAsset, 
+    required this.tooltip, 
+    required this.color,
+    this.onPressed
+  }) : assert(tooltip.length > 0);
+
+  final String svgAsset;
+  final String tooltip;
+  final Color color;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(8.0),
+        child: Material(
+          type: MaterialType.transparency,
+          child: Tooltip(
+            message: tooltip,
+            child: InkWell(
+              onTap: onPressed ?? () {},
+              customBorder: const CircleBorder(),
+              child: Ink(
+                padding: const EdgeInsetsDirectional.all(12.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.0),
+                ),
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10.0,
+                        offset: Offset(0.0, 0.0),
+                      ),
+                    ],
+                  ),
+                  child: SvgPicture.asset(
+                    svgAsset, 
+                    width: 24,  
+                    height: 24,
+                    colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

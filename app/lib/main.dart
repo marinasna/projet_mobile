@@ -5,6 +5,7 @@ import 'package:formation_flutter/res/app_theme_extension.dart';
 import 'package:formation_flutter/screens/homepage/homepage_screen.dart';
 import 'package:formation_flutter/screens/product/product_page.dart';
 import 'package:formation_flutter/screens/auth/login_page.dart';
+import 'package:formation_flutter/screens/scan/scan_page.dart';
 import 'package:formation_flutter/screens/auth/register_page.dart';
 import 'package:formation_flutter/states/auth_provider.dart';
 import 'package:go_router/go_router.dart';
@@ -42,6 +43,7 @@ GoRouter _router = GoRouter(
     GoRoute(path: '/', builder: (_, _) => HomePage()),
     GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
     GoRoute(path: '/register', builder: (_, _) => const RegisterPage()),
+    GoRoute(path: '/scan', builder: (_, _) => const ScanPage()),
     GoRoute(
       path: '/product',
       builder: (_, GoRouterState state) =>

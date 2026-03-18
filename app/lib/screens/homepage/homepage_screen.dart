@@ -6,6 +6,7 @@ import 'package:formation_flutter/screens/homepage/homepage_empty.dart';
 import 'package:formation_flutter/states/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -51,6 +52,7 @@ class HomePage extends StatelessWidget {
   }
 
   void _onScanButtonPressed(BuildContext context) {
-    context.push('/product', extra: '5000159484695');
+    //context.push('/product', extra: '5000159484695');
+    context.push('/scan');
   }
 }

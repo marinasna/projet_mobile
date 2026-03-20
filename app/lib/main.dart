@@ -4,6 +4,7 @@ import 'package:formation_flutter/res/app_colors.dart';
 import 'package:formation_flutter/res/app_theme_extension.dart';
 import 'package:formation_flutter/screens/homepage/homepage_screen.dart';
 import 'package:formation_flutter/screens/product/product_page.dart';
+import 'package:formation_flutter/screens/homepage/favorites_page.dart';
 import 'package:formation_flutter/screens/auth/login_page.dart';
 import 'package:formation_flutter/screens/scan/scan_page.dart';
 import 'package:formation_flutter/screens/auth/register_page.dart';
@@ -13,10 +14,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider.value(
-      value: _authProvider,
-      child: const MyApp(),
-    ),
+    ChangeNotifierProvider.value(value: _authProvider, child: const MyApp()),
   );
 }
 
@@ -27,7 +25,9 @@ GoRouter _router = GoRouter(
   refreshListenable: _authProvider,
   redirect: (BuildContext context, GoRouterState state) {
     final bool isAuthenticated = _authProvider.isAuthenticated;
-    final bool isAuthRoute = state.matchedLocation == '/login' || state.matchedLocation == '/register';
+    final bool isAuthRoute =
+        state.matchedLocation == '/login' ||
+        state.matchedLocation == '/register';
 
     if (!isAuthenticated && !isAuthRoute) {
       return '/login'; // Redirect to login if not authenticated and trying to access a protected route
@@ -44,6 +44,7 @@ GoRouter _router = GoRouter(
     GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
     GoRoute(path: '/register', builder: (_, _) => const RegisterPage()),
     GoRoute(path: '/scan', builder: (_, _) => const ScanPage()),
+    GoRoute(path: '/favorites', builder: (_, _) => const FavoritesPage()),
     GoRoute(
       path: '/product',
       builder: (_, GoRouterState state) =>

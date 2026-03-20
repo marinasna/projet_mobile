@@ -4,6 +4,9 @@ import 'package:formation_flutter/model/product.dart';
 import 'package:formation_flutter/res/app_colors.dart';
 import 'package:formation_flutter/res/app_icons.dart';
 import 'package:formation_flutter/res/app_theme_extension.dart';
+import 'package:formation_flutter/screens/product/product_fetcher.dart';
+import 'package:formation_flutter/screens/product/states/success/rappel_banner.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ProductTab0 extends StatelessWidget {
@@ -13,11 +16,18 @@ class ProductTab0 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final rappel = context.watch<ProductFetcher>().rappel;
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        _Scores(),
-        Padding(
+        if (rappel != null)
+          RappelBanner(
+            rappel: rappel,
+            onTap: () => context.push('/rappel', extra: rappel),
+          ),
+        const _Scores(),
+        const Padding(
           padding: EdgeInsetsDirectional.symmetric(
             horizontal: _kHorizontalPadding,
             vertical: 30.0,

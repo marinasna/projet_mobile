@@ -8,6 +8,8 @@ import 'package:formation_flutter/screens/homepage/favorites_page.dart';
 import 'package:formation_flutter/screens/auth/login_page.dart';
 import 'package:formation_flutter/screens/scan/scan_page.dart';
 import 'package:formation_flutter/screens/auth/register_page.dart';
+import 'package:formation_flutter/screens/rappel/rappel_page.dart';
+import 'package:formation_flutter/model/rappel.dart';
 import 'package:formation_flutter/states/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +51,11 @@ GoRouter _router = GoRouter(
       path: '/product',
       builder: (_, GoRouterState state) =>
           ProductPage(barcode: state.extra as String),
+    ),
+    GoRoute(
+      path: '/rappel',
+      builder: (_, GoRouterState state) =>
+          RappelPage(rappel: state.extra as Rappel),
     ),
   ],
 );

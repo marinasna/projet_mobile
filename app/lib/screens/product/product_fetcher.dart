@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:formation_flutter/api/open_food_facts_api.dart';
 import 'package:formation_flutter/api/pocketbase_service.dart';
+import 'package:formation_flutter/api/rappel_api.dart';
 import 'package:formation_flutter/model/product.dart';
+import 'package:formation_flutter/model/rappel.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class ProductFetcher extends ChangeNotifier {
@@ -15,6 +17,7 @@ class ProductFetcher extends ChangeNotifier {
   ProductFetcherState _state;
   bool isFavorite = false;
   String? _recordId;
+  Rappel? rappel;
 
   Future<void> loadProduct() async {
     _state = ProductFetcherLoading();
@@ -67,6 +70,17 @@ class ProductFetcher extends ChangeNotifier {
         } else {
           print('[PocketBase] unknown error: $e');
         }
+      }
+
+      // Rappel produit check
+      try {
+        rappel = await RappelApi().fetchAndSaveRappel(_barcode);
+        if (rappel != null) {
+          print('[ProductFetcher] rappel found: ${rappel!.numeroFiche}');
+        }
+      } catch (e) {
+        print('[ProductFetcher] rappel check error: $e');
+        rappel = null;
       }
 
       _state = ProductFetcherSuccess(product);

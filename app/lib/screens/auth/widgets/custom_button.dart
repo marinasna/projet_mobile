@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:formation_flutter/res/app_colors.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -21,19 +22,20 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromRGBO(251, 175, 2, 1),
-          foregroundColor: const Color.fromRGBO(8, 0, 64, 1),
+          backgroundColor: AppColors.yellow,
+          foregroundColor: AppColors.blue,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(22),
           ),
           elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24),
         ),
         child: isLoading
             ? const SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                  color: Color.fromRGBO(8, 0, 64, 1),
+                  color: AppColors.blue,
                   strokeWidth: 2,
                 ),
               )
@@ -44,10 +46,14 @@ class CustomButton extends StatelessWidget {
                     text,
                     style: const TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SvgPicture.asset('res/svg/Group.svg'),
+                  SvgPicture.asset(
+                    'res/svg/Group.svg',
+                    width: 20,
+                    height: 12,
+                  ),
                 ],
               ),
       ),

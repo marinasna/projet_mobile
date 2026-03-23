@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:formation_flutter/res/app_colors.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:formation_flutter/screens/auth/widgets/custom_button.dart';
 import 'package:formation_flutter/screens/auth/widgets/custom_text_field.dart';
 import 'package:formation_flutter/states/auth_provider.dart';
@@ -31,17 +31,18 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 100), // Spacing from top
-              const Text(
-                'Connexion',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.blue,
+              const SizedBox(height: 200), // Distance to reach title around Y=265
+              const Center(
+                child: Text(
+                  'Connexion',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.blue,
+                  ),
                 ),
               ),
               const SizedBox(height: 60),
@@ -57,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                 prefixIcon: SvgPicture.asset('res/svg/ic_password.svg'),
                 obscureText: true,
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 48),
               CustomButton(
                 text: 'Créer un compte',
                 onPressed: () {
@@ -101,6 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 },
               ),
+              const SizedBox(height: 40),
             ],
           ),
         ),

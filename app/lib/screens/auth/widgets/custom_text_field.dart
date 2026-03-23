@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:formation_flutter/res/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
@@ -16,39 +17,53 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+    return Container(
+      width: 351,
+      height: 44,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        style: const TextStyle(
+          fontSize: 14,
+          color: AppColors.blue,
+        ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: const TextStyle(
-            color: Color.fromRGBO(106, 106, 106, 1),
+            color: AppColors.grey3,
             fontSize: 14,
           ),
           prefixIcon: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: prefixIcon,
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: SizedBox(
+              width: 24,
+              child: prefixIcon,
+            ),
+          ),
+          prefixIconConstraints: const BoxConstraints(
+            minWidth: 48,
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
-            vertical: 12,
+            vertical: 10,
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(
-              color: Color.fromRGBO(106, 106, 106, 1),
+              color: AppColors.grey3,
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(
-              color: Color.fromRGBO(8, 0, 64, 1),
+              color: AppColors.blue,
               width: 1,
             ),
           ),
+          filled: true,
+          fillColor: Colors.white,
         ),
       ),
     );

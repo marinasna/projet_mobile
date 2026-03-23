@@ -4,7 +4,6 @@ import 'package:formation_flutter/api/pocketbase_service.dart';
 import 'package:formation_flutter/api/rappel_api.dart';
 import 'package:formation_flutter/model/product.dart';
 import 'package:formation_flutter/model/rappel.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 class ProductFetcher extends ChangeNotifier {
   ProductFetcher({required String barcode})
@@ -25,67 +24,92 @@ class ProductFetcher extends ChangeNotifier {
 
     try {
       print('[ProductFetcher] fetching barcode: $_barcode');
-      Product product = await OpenFoodFactsAPI().getProduct(_barcode);
-      print('[ProductFetcher] success: ${product.name}');
+      
+      // 1. Fetch Product from OpenFoodFacts (Optional)
+      Product? product;
+      try {
+        product = await OpenFoodFactsAPI().getProduct(_barcode);
+        if (product != null) {
+          print('[ProductFetcher] product found: ${product.name}');
+        }
+      } catch (e) {
+        print('[ProductFetcher] OpenFoodFacts error: $e');
+      }
 
-      // PocketBase save
+      // 2. Rappel produit check (Always runs)
+      try {
+        rappel = await RappelApi().fetchRappelFromPocketBase(_barcode);
+        if (rappel != null) {
+          print('[ProductFetcher] recall found in local DB: ${rappel!.numeroFiche}');
+        }
+      } catch (e) {
+        print('[ProductFetcher] recall check error: $e');
+        rappel = null;
+      }
+
+      // 3. Save to history (Unify Logic)
       try {
         final userId = pb.authStore.model?.id;
         if (userId != null) {
-          // Vérification des doublons (même utilisateur, même code-barres)
+          print('[ProductFetcher] user authenticated, updating scan history...');
+          
           final existing = await pb.collection('scans').getList(
-            filter: 'user_id = "$userId" && barcode = "${product.barcode}"',
+            filter: 'user_id = "$userId" && barcode = "$_barcode"',
             perPage: 1,
           );
 
           if (existing.items.isEmpty) {
+            String name = 'Produit Inconnu';
+            String? imageUrl;
+            String nutriscore = '';
+
+            if (product != null) {
+              name = product.name ?? 'Produit sans nom';
+              imageUrl = product.picture;
+              nutriscore = product.nutriScore?.name ?? '';
+            } else if (rappel != null) {
+              name = rappel!.libelle ?? 'Produit de Rappel';
+              imageUrl = rappel!.firstImageUrl;
+            }
+
             final bodyData = <String, dynamic>{
               'user_id': userId,
-              'barcode': product.barcode,
-              'name': product.name ?? 'Unknown',
-              'nutriscore': product.nutriScore?.name ?? '',
+              'barcode': _barcode,
+              'name': name,
+              'nutriscore': nutriscore,
               'is_favorite': false,
+              if (imageUrl != null && imageUrl.isNotEmpty) 'image_url': imageUrl,
             };
-            
-            if (product.picture != null && product.picture!.isNotEmpty) {
-              bodyData['image_url'] = product.picture;
-            }
-            
+
             final record = await pb.collection('scans').create(body: bodyData);
             _recordId = record.id;
             isFavorite = false;
-            print('[PocketBase] saved scan record: ${record.id}');
+            print('[ProductFetcher] scan created: ${record.id} ($name)');
           } else {
             final record = existing.items.first;
             _recordId = record.id;
             isFavorite = record.getBoolValue('is_favorite', false);
-            print('[PocketBase] product already in history, skipping save. is_favorite: $isFavorite');
+            print('[ProductFetcher] found existing scan: $_recordId');
           }
         } else {
-          print('[PocketBase] warning: user not authenticated, skipping save');
+          print('[ProductFetcher] WARNING: user NOT authenticated, scan NOT saved to history');
         }
       } catch (e) {
-        if (e is ClientException) {
-          print('[PocketBase] error (${e.statusCode}): ${e.response}');
-        } else {
-          print('[PocketBase] unknown error: $e');
-        }
+        print('[ProductFetcher] ERROR saving scan history: $e');
       }
 
-      // Rappel produit check
-      try {
-        rappel = await RappelApi().fetchAndSaveRappel(_barcode);
-        if (rappel != null) {
-          print('[ProductFetcher] rappel found: ${rappel!.numeroFiche}');
-        }
-      } catch (e) {
-        print('[ProductFetcher] rappel check error: $e');
-        rappel = null;
+      // 4. Final Success State
+      if (product == null && rappel == null) {
+        _state = ProductFetcherSuccess(
+          Product(barcode: _barcode, name: 'Produit Inconnu'),
+        );
+      } else {
+        _state = ProductFetcherSuccess(
+          product ?? Product(barcode: _barcode, name: 'Produit de Rappel'),
+        );
       }
-
-      _state = ProductFetcherSuccess(product);
     } catch (error) {
-      print('[ProductFetcher] error: $error');
+      print('[ProductFetcher] general error: $error');
       _state = ProductFetcherError(error);
     } finally {
       notifyListeners();

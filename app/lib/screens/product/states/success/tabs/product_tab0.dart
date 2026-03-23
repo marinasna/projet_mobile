@@ -124,7 +124,8 @@ class _Nutriscore extends StatelessWidget {
           style: context.theme.title3,
         ),
         const SizedBox(height: 5.0),
-        Image.asset(_findAssetName(), height: 42.0),
+        if (nutriscore != ProductNutriScore.unknown)
+          Image.asset(_findAssetName(), height: 42.0),
       ],
     );
   }
@@ -136,7 +137,7 @@ class _Nutriscore extends StatelessWidget {
       ProductNutriScore.C => 'res/drawables/nutriscore_c.png',
       ProductNutriScore.D => 'res/drawables/nutriscore_d.png',
       ProductNutriScore.E => 'res/drawables/nutriscore_e.png',
-      ProductNutriScore.unknown => 'TODO',
+      ProductNutriScore.unknown => '', // Should not be called if unknown
     };
   }
 }

@@ -20,44 +20,64 @@ class ProductTab3 extends StatelessWidget {
       );
     }
 
+    const headerStyle = TextStyle(
+      fontFamily: 'Avenir',
+      fontWeight: FontWeight.w500, 
+      fontSize: 12,
+      color: AppColors.blue,
+    );
+
+    final divider = Divider(color: AppColors.grey1.withOpacity(0.5), height: 1);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: const [
-              Expanded(flex: 5, child: SizedBox()),
-              Expanded(
-                flex: 2, 
-                child: Text('Pour 100g', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12), textAlign: TextAlign.right)
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.grey1.withOpacity(0.5)),
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                children: [
+                  const Expanded(flex: 5, child: SizedBox()),
+                  const _VerticalSeparator(),
+                  Expanded(
+                    flex: 2, 
+                    child: Text('Pour 100g', style: headerStyle, textAlign: TextAlign.center)
+                  ),
+                  const _VerticalSeparator(),
+                  Expanded(
+                    flex: 2, 
+                    child: Text('Par part', style: headerStyle, textAlign: TextAlign.center)
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 2, 
-                child: Text('Par part', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12), textAlign: TextAlign.right)
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          const Divider(),
-          _buildTableRow('Énergie', nutrition.energy, isIndented: false),
-          const Divider(),
-          _buildTableRow('Matières grasses', nutrition.fat, isIndented: false),
-          const Divider(),
-          _buildTableRow('dont Acides gras saturés', nutrition.saturatedFat, isIndented: true),
-          const Divider(),
-          _buildTableRow('Glucides', nutrition.carbohydrate, isIndented: false),
-          const Divider(),
-          _buildTableRow('dont Sucres', nutrition.sugar, isIndented: true),
-          const Divider(),
-          _buildTableRow('Fibres alimentaires', nutrition.fiber, isIndented: false),
-          const Divider(),
-          _buildTableRow('Protéines', nutrition.proteins, isIndented: false),
-          const Divider(),
-          _buildTableRow('Sel', nutrition.salt, isIndented: false),
-          const Divider(),
-          _buildTableRow('Sodium', nutrition.sodium, isIndented: false),
-        ],
+            ),
+            divider,
+            _buildTableRow('Énergie', nutrition.energy),
+            divider,
+            _buildTableRow('Matières grasses', nutrition.fat),
+            divider,
+            _buildTableRow('dont Acides gras saturés', nutrition.saturatedFat, isIndented: true),
+            divider,
+            _buildTableRow('Glucides', nutrition.carbohydrate),
+            divider,
+            _buildTableRow('dont Sucres', nutrition.sugar, isIndented: true),
+            divider,
+            _buildTableRow('Fibres alimentaires', nutrition.fiber),
+            divider,
+            _buildTableRow('Protéines', nutrition.proteins),
+            divider,
+            _buildTableRow('Sel', nutrition.salt),
+            divider,
+            _buildTableRow('Sodium', nutrition.sodium),
+          ],
+        ),
       ),
     );
   }
@@ -71,43 +91,69 @@ class ProductTab3 extends StatelessWidget {
         ? '${nutriment.perServing} ${nutriment.unit}' 
         : '?';
 
-    return Padding(
-      padding: EdgeInsets.only(
-        top: 8.0, 
-        bottom: 8.0, 
-        left: isIndented ? 20.0 : 0.0
-      ),
+    final labelStyle = TextStyle(
+      color: AppColors.blue,
+      fontFamily: 'Avenir',
+      fontWeight: isIndented ? FontWeight.w400 : FontWeight.w500,
+      fontSize: 15,
+    );
+
+    final valueStyle = const TextStyle(
+      color: AppColors.blue,
+      fontFamily: 'Avenir',
+      fontWeight: FontWeight.w400,
+      fontSize: 15,
+    );
+
+    return IntrinsicHeight(
       child: Row(
         children: [
           Expanded(
             flex: 5,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: AppColors.blue,
-                fontWeight: isIndented ? FontWeight.normal : FontWeight.bold,
-                fontSize: 14,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: 6.0, 
+                bottom: 6.0, 
+                left: isIndented ? 30.0 : 15.0
+              ),
+              child: Text(
+                label,
+                style: labelStyle,
               ),
             ),
           ),
+          const _VerticalSeparator(),
           Expanded(
             flex: 2,
             child: Text(
               per100g,
-              textAlign: TextAlign.right,
-              style: const TextStyle(color: AppColors.grey3, fontSize: 13),
+              textAlign: TextAlign.center,
+              style: valueStyle,
             ),
           ),
+          const _VerticalSeparator(),
           Expanded(
             flex: 2,
             child: Text(
               perServing,
-              textAlign: TextAlign.right,
-              style: const TextStyle(color: AppColors.grey3, fontSize: 13),
+              textAlign: TextAlign.center,
+              style: valueStyle,
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _VerticalSeparator extends StatelessWidget {
+  const _VerticalSeparator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      color: AppColors.grey1.withOpacity(0.5),
     );
   }
 }

@@ -4,16 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:formation_flutter/model/product.dart';
 import 'package:formation_flutter/res/app_colors.dart';
 import 'package:formation_flutter/res/app_theme_extension.dart';
+import 'package:formation_flutter/screens/product/states/success/product_page_body.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class ProductPageHeader extends StatelessWidget {
-  const ProductPageHeader({super.key});
+  const ProductPageHeader({super.key, required this.tab});
+
+  final ProductDetailsCurrentTab tab;
 
   @override
   Widget build(BuildContext context) {
     return MultiSliver(
-      children: const <Widget>[ProductImageHeader(), ProductNameHeader()],
+      children: <Widget>[
+        const ProductImageHeader(), 
+        ProductNameHeader(tab: tab),
+      ],
     );
   }
 }
@@ -108,7 +114,9 @@ class _ProductHeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class ProductNameHeader extends StatelessWidget {
-  const ProductNameHeader({super.key});
+  const ProductNameHeader({super.key, required this.tab});
+
+  final ProductDetailsCurrentTab tab;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +126,7 @@ class ProductNameHeader extends StatelessWidget {
       child: Material(
         color: Colors.white,
         child: Padding(
-          padding: EdgeInsetsDirectional.only(start: 20.0, end: 20.0),
+          padding: const EdgeInsetsDirectional.only(start: 20.0, end: 20.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,13 +137,32 @@ class ProductNameHeader extends StatelessWidget {
                 product.brands?.join(', ') ?? '-',
                 style: context.theme.title2.copyWith(color: AppColors.grey2),
               ),
-              if (product.altName != null && product.altName!.isNotEmpty) ...[
-                const SizedBox(height: 8.0),
-                Text(
-                  product.altName!,
-                  style: context.theme.title3.copyWith(color: AppColors.grey3),
+              
+              const SizedBox(height: 8.0),
+
+              // TAB-SPECIFIC SUBTITLE
+              if (tab == ProductDetailsCurrentTab.summary) ...[
+                if (product.altName != null && product.altName!.isNotEmpty)
+                  Text(
+                    product.altName!,
+                    style: context.theme.title3.copyWith(color: AppColors.grey3),
+                  ),
+              ] else if (tab == ProductDetailsCurrentTab.nutrition) ...[
+                Center(
+                  child: Text(
+                    'Repères nutritionnels pour 100g',
+                    style: const TextStyle(
+                      color: Color(0xFF6A6A6A),
+                      fontFamily: 'Avenir',
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: -0.48,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
+              
               const SizedBox(height: 8.0),
             ],
           ),

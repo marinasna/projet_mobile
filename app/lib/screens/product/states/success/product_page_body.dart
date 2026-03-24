@@ -39,7 +39,7 @@ class _ProductPageBodyState extends State<ProductPageBody> {
           Expanded(
             child: CustomScrollView(
               slivers: <Widget>[
-                ProductPageHeader(),
+                ProductPageHeader(tab: _tab),
                 SliverPadding(
                   padding: EdgeInsetsDirectional.only(top: 10.0),
                   sliver: SliverFillRemaining(

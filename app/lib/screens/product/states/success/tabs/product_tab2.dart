@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:formation_flutter/model/product.dart';
 import 'package:formation_flutter/res/app_colors.dart';
-import 'package:formation_flutter/res/app_theme_extension.dart';
 import 'package:provider/provider.dart';
 
 class ProductTab2 extends StatelessWidget {
@@ -19,37 +18,32 @@ class ProductTab2 extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 10),
-          Center(
-            child: Text(
-              'Repères nutritionnels pour 100g',
-              style: context.theme.title3.copyWith(color: AppColors.grey2),
-            ),
-          ),
-          const SizedBox(height: 40),
           
+          const Divider(color: AppColors.grey1, height: 1),
           _buildNutrientRow(
             label: 'Matières grasses / lipides',
             nutriment: nutrition?.fat,
             level: levels?.fat,
           ),
-          const SizedBox(height: 20),
+          const Divider(color: AppColors.grey1, height: 1),
           _buildNutrientRow(
             label: 'Acides gras saturés',
             nutriment: nutrition?.saturatedFat,
             level: levels?.saturatedFat,
           ),
-          const SizedBox(height: 20),
+          const Divider(color: AppColors.grey1, height: 1),
           _buildNutrientRow(
             label: 'Sucres',
             nutriment: nutrition?.sugar,
             level: levels?.sugars,
           ),
-          const SizedBox(height: 20),
+          const Divider(color: AppColors.grey1, height: 1),
           _buildNutrientRow(
             label: 'Sel',
             nutriment: nutrition?.salt,
             level: levels?.salt,
           ),
+          const Divider(color: AppColors.grey1, height: 1),
         ],
       ),
     );
@@ -70,58 +64,64 @@ class ProductTab2 extends StatelessWidget {
     if (level != null) {
       switch (level.toLowerCase()) {
         case 'low':
-          levelColor = AppColors.greenScoreA; // Vert
+          levelColor = AppColors.nutrientLevelLow;
           levelText = 'Faible quantité';
           break;
         case 'moderate':
-          levelColor = Colors.orange; // Orange
+          levelColor = AppColors.nutrientLevelModerate;
           levelText = 'Quantité modérée';
           break;
         case 'high':
-          levelColor = AppColors.greenScoreE; // Rouge
+          levelColor = AppColors.nutrientLevelHigh;
           levelText = 'Quantité élevée';
           break;
       }
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 6,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.blue, 
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0), // Increased spacing
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 6,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: AppColors.blue, 
+                fontFamily: 'Avenir',
+                fontWeight: FontWeight.w500,
+                fontSize: 15,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          flex: 4,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                valueText,
-                style: const TextStyle(
-                  color: AppColors.grey3,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+          Expanded(
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  valueText,
+                  style: TextStyle(
+                    color: levelColor,
+                    fontFamily: 'Avenir',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
+                  ),
                 ),
-              ),
-              Text(
-                levelText,
-                style: TextStyle(
-                  color: levelColor,
-                  fontSize: 13,
+                Text(
+                  levelText,
+                  style: TextStyle(
+                    color: levelColor,
+                    fontFamily: 'Avenir',
+                    fontSize: 13,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

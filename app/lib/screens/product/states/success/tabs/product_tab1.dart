@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:formation_flutter/model/product.dart';
 import 'package:formation_flutter/res/app_colors.dart';
-import 'package:formation_flutter/res/app_theme_extension.dart';
 import 'package:provider/provider.dart';
 
 class ProductTab1 extends StatelessWidget {
@@ -49,7 +48,12 @@ class ProductTab1 extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Text(
         title,
-        style: context.theme.title3.copyWith(color: AppColors.blue, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          color: AppColors.blue, 
+          fontFamily: 'Avenir',
+          fontSize: 15.0,
+          fontWeight: FontWeight.w500,
+        ),
         textAlign: TextAlign.center,
       ),
     );
@@ -62,7 +66,9 @@ class ProductTab1 extends StatelessWidget {
         text,
         style: const TextStyle(
           color: AppColors.blue, 
-          fontSize: 14.0, 
+          fontFamily: 'Avenir',
+          fontSize: 15.0, 
+          fontWeight: FontWeight.w400,
           height: 1.5,
         ),
       ),

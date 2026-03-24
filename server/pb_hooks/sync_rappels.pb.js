@@ -1,8 +1,4 @@
-// pb_hooks/sync_rappels.pb.js
 
-/**
- * Synchronisation complète des rappels (16 000+ records).
- */
 function runFullSync() {
     console.log("-----------------------------------------");
     console.log("Starting FULL RappelSync (16k+ records)...");
@@ -92,14 +88,10 @@ function runFullSync() {
     console.log(" Full Sync finished. Total: " + totalSynced + " records.");
 }
 
-// Global hooks
-
-// Synchronisation planifiée: minuit et midi (00:00, 12:00)
 cronAdd("sync_rappels_job", "0 0,12 * * *", () => {
     runFullSync();
 });
 
-// Route manuelle pour déclencher la synchro via l'URL (si besoin)
 routerAdd("GET", "/api/sync-rappels", (c) => {
     runFullSync();
     return c.json(200, { message: "Sync process started manually." });

@@ -2,7 +2,6 @@
 migrate((app) => {
   const collection = app.findCollectionByNameOrId("pbc_3789704380")
 
-  // update collection data
   unmarshal({
     "createRule": "",
     "deleteRule": "",
@@ -15,7 +14,6 @@ migrate((app) => {
 }, (app) => {
   const collection = app.findCollectionByNameOrId("pbc_3789704380")
 
-  // update collection data
   unmarshal({
     "createRule": null,
     "deleteRule": null,

@@ -36,7 +36,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           .collection('scans')
           .getList(
             filter: 'user_id = "$userId" && is_favorite = true',
-            sort: '-created', // Les plus récents en premier
+            sort: '-created',
           );
       if (mounted) {
         setState(() {
@@ -57,7 +57,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   Future<void> _onProductTap(BuildContext context, String barcode) async {
     await context.push('/product', extra: barcode);
-    // Recharge les favoris au retour (au cas où l'utilisateur aurait retiré le favori)
     _loadFavorites();
   }
 

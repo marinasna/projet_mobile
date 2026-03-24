@@ -25,7 +25,6 @@ class ProductFetcher extends ChangeNotifier {
     try {
       print('[ProductFetcher] fetching barcode: $_barcode');
       
-      // 1. Fetch Product from OpenFoodFacts (Optional)
       Product? product;
       try {
         product = await OpenFoodFactsAPI().getProduct(_barcode);
@@ -36,7 +35,6 @@ class ProductFetcher extends ChangeNotifier {
         print('[ProductFetcher] OpenFoodFacts error: $e');
       }
 
-      // 2. Rappel produit check (Always runs)
       try {
         rappel = await RappelApi().fetchRappelFromPocketBase(_barcode);
         if (rappel != null) {
@@ -47,12 +45,9 @@ class ProductFetcher extends ChangeNotifier {
         rappel = null;
       }
 
-      // 3. Save to history (Unify Logic)
       try {
         final userId = pb.authStore.model?.id;
         if (userId != null) {
-          print('[ProductFetcher] user authenticated, updating scan history...');
-          
           final existing = await pb.collection('scans').getList(
             filter: 'user_id = "$userId" && barcode = "$_barcode"',
             perPage: 1,
@@ -98,7 +93,6 @@ class ProductFetcher extends ChangeNotifier {
         print('[ProductFetcher] ERROR saving scan history: $e');
       }
 
-      // 4. Final Success State
       if (product == null && rappel == null) {
         _state = ProductFetcherSuccess(
           Product(barcode: _barcode, name: 'Produit Inconnu'),
@@ -119,7 +113,6 @@ class ProductFetcher extends ChangeNotifier {
   Future<void> toggleFavorite() async {
     if (_recordId == null) return;
     
-    // Inverser l'état local immédiatement
     isFavorite = !isFavorite;
     notifyListeners();
 
@@ -130,7 +123,6 @@ class ProductFetcher extends ChangeNotifier {
       print('[PocketBase] favorite toggled to: $isFavorite for $_recordId');
     } catch (e) {
       print('[PocketBase] error updating favorite: $e');
-      // Annuler en cas d'erreur
       isFavorite = !isFavorite;
       notifyListeners();
     }

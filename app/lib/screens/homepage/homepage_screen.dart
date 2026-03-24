@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           .collection('scans')
           .getList(
             filter: 'user_id = "$userId"',
-            sort: '-created', // Les plus récents en premier
+            sort: '-created',
           );
       if (mounted) {
         setState(() {
@@ -63,10 +63,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _onScanButtonPressed(BuildContext context) async {
     final barcode = await context.push<String>('/scan');
     if (barcode != null) {
-      // Une fois le scan terminé, on ouvre la page produit
       await context.push('/product', extra: barcode);
     }
-    // Recharge l'historique de façon garantie lorsque l'utilisateur revient sur l'accueil
     _loadScans();
   }
 

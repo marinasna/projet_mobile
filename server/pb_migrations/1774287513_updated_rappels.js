@@ -2,23 +2,18 @@
 migrate((app) => {
   const collection = app.findCollectionByNameOrId("pbc_1758851292")
 
-  // remove field
   collection.fields.removeById("text3070465906")
 
-  // remove field
   collection.fields.removeById("text2247441870")
 
-  // remove field
   collection.fields.removeById("text713973125")
 
-  // remove field
   collection.fields.removeById("text1874818950")
 
   return app.save(collection)
 }, (app) => {
   const collection = app.findCollectionByNameOrId("pbc_1758851292")
 
-  // add field
   collection.fields.addAt(6, new Field({
     "autogeneratePattern": "",
     "hidden": false,
@@ -34,7 +29,6 @@ migrate((app) => {
     "type": "text"
   }))
 
-  // add field
   collection.fields.addAt(7, new Field({
     "autogeneratePattern": "",
     "hidden": false,
@@ -50,7 +44,6 @@ migrate((app) => {
     "type": "text"
   }))
 
-  // add field
   collection.fields.addAt(8, new Field({
     "autogeneratePattern": "",
     "hidden": false,
@@ -66,7 +59,6 @@ migrate((app) => {
     "type": "text"
   }))
 
-  // add field
   collection.fields.addAt(9, new Field({
     "autogeneratePattern": "",
     "hidden": false,

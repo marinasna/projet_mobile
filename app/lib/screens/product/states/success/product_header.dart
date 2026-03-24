@@ -133,7 +133,7 @@ class ProductNameHeader extends StatelessWidget {
                 const SizedBox(height: 8.0),
                 Text(
                   product.altName!,
-                  style: context.theme.title3.copyWith(color: AppColors.grey3), // Typographie grise légère
+                  style: context.theme.title3.copyWith(color: AppColors.grey3),
                 ),
               ],
               const SizedBox(height: 8.0),

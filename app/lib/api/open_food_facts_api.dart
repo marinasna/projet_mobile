@@ -5,14 +5,12 @@ import 'package:formation_flutter/model/product.dart';
 class OpenFoodFactsAPI {
   static const String _baseUrl = 'https://api.formation-flutter.fr/v2';
 
-  // Singleton
   static final OpenFoodFactsAPI _instance = OpenFoodFactsAPI._internal();
 
   factory OpenFoodFactsAPI() => _instance;
 
   final Dio _dio;
   
-  // Cache et file d'attente pour limiter les requêtes simultanées
   final Map<String, Future<Product?>> _activeRequests = {};
   Future<void> _queue = Future.value();
 
@@ -27,7 +25,7 @@ class OpenFoodFactsAPI {
     _activeRequests[barcode] = completer.future;
 
     _queue = _queue.then((_) async {
-      await Future.delayed(const Duration(milliseconds: 300)); // Stagger
+      await Future.delayed(const Duration(milliseconds: 300));
       try {
         final response = await _dio.get(
           '/getProduct',

@@ -6,9 +6,11 @@ import 'package:formation_flutter/res/app_theme_extension.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RappelPage extends StatelessWidget {
-  const RappelPage({super.key, required this.rappel});
+  const RappelPage({super.key, required this.rappel, this.productImageUrl});
 
   final Rappel rappel;
+  final String? productImageUrl;
+
 
   @override
   Widget build(BuildContext context) {
@@ -73,26 +75,41 @@ class RappelPage extends StatelessWidget {
   }
 
   Widget _buildProductImage() {
-    final imageUrl = rappel.firstImageUrl;
-    if (imageUrl == null || imageUrl.trim().isEmpty) {
-      return const SizedBox.shrink();
+    String? url;
+
+    // Priorité 1: Image du produit (Open Food Facts) 
+    if (productImageUrl != null && productImageUrl!.trim().isNotEmpty) {
+      url = productImageUrl!.trim();
+    } else {
+      // Priorité 2: Image du rappel
+      final rawUrls = rappel.liensVersLesImages ?? '';
+      final candidates = rawUrls
+          .split(RegExp(r'[|¤\n]'))
+          .map((u) => u.trim())
+          .where((u) => u.isNotEmpty && (u.startsWith('http://') || u.startsWith('https://')))
+          .map((u) => u.startsWith('http://') ? u.replaceFirst('http://', 'https://') : u)
+          .toList();
+      if (candidates.isNotEmpty) url = candidates.first;
     }
 
-    // Beaucoup d'images de rappel sont en HTTP, ce qui est bloqué par Android.
-    // On force HTTPS.
-    String secureUrl = imageUrl.trim();
-    if (secureUrl.startsWith('http://')) {
-      secureUrl = secureUrl.replaceFirst('http://', 'https://');
-    }
+    if (url == null) return const SizedBox.shrink();
 
-    return Image.network(
-      secureUrl,
-      width: double.infinity,
-      height: 300,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 40.0),
+      child: Center(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.network(
+            url,
+            height: 220,
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+          ),
+        ),
+      ),
     );
   }
+
 
   Widget _buildSection(BuildContext context, String title, String? content) {
     if (content == null || content.trim().isEmpty) return const SizedBox.shrink();

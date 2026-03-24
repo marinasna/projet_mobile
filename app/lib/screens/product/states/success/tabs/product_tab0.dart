@@ -21,10 +21,16 @@ class ProductTab0 extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (rappel != null)
+    if (rappel != null)
           RappelBanner(
             rappel: rappel,
-            onTap: () => context.push('/rappel', extra: rappel),
+            onTap: () {
+              final product = context.read<Product>();
+              context.push('/rappel', extra: {
+                'rappel': rappel,
+                'imageUrl': product.picture ?? '',
+              });
+            },
           ),
         const _Scores(),
         const Padding(

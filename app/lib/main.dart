@@ -54,8 +54,13 @@ GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/rappel',
-      builder: (_, GoRouterState state) =>
-          RappelPage(rappel: state.extra as Rappel),
+      builder: (_, GoRouterState state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return RappelPage(
+          rappel: extra['rappel'] as Rappel,
+          productImageUrl: extra['imageUrl'] as String?,
+        );
+      },
     ),
   ],
 );

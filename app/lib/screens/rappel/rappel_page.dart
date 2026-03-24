@@ -44,10 +44,8 @@ class RappelPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            // Image du produit (directement après l'AppBar pour coller au screenshot)
+            // Image du produit pleine largeur comme la maquette
             _buildProductImage(),
-            
-            const SizedBox(height: 10.0),
             
             // Sections
             _buildSection(context, 'Dates de commercialisation', _formatDates()),
@@ -76,28 +74,23 @@ class RappelPage extends StatelessWidget {
 
   Widget _buildProductImage() {
     final imageUrl = rappel.firstImageUrl;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10.0),
-        child: imageUrl != null 
-          ? Image.network(
-              imageUrl,
-              height: 200,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
-            )
-          : _buildPlaceholder(),
-      ),
-    );
-  }
+    if (imageUrl == null || imageUrl.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
 
-  Widget _buildPlaceholder() {
-    return Container(
-      height: 200,
+    // Beaucoup d'images de rappel sont en HTTP, ce qui est bloqué par Android.
+    // On force HTTPS.
+    String secureUrl = imageUrl.trim();
+    if (secureUrl.startsWith('http://')) {
+      secureUrl = secureUrl.replaceFirst('http://', 'https://');
+    }
+
+    return Image.network(
+      secureUrl,
       width: double.infinity,
-      color: AppColors.grey1,
-      child: const Icon(Icons.image_not_supported_outlined, color: AppColors.grey2, size: 50),
+      height: 300,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
     );
   }
 
@@ -136,14 +129,16 @@ class RappelPage extends StatelessWidget {
   }
 
   String? _formatDates() {
-    final debut = rappel.dateDebutCommercialisation;
-    final fin = rappel.dateFinCommercialisation;
-    if (debut == null && fin == null) return null;
-    if (debut != null && fin != null) {
+    final debut = rappel.dateDebutCommercialisation?.trim() ?? '';
+    final fin = rappel.dateFinCommercialisation?.trim() ?? '';
+    
+    if (debut.isEmpty && fin.isEmpty) return null;
+    
+    if (debut.isNotEmpty && fin.isNotEmpty) {
       return 'Du ${_formatDate(debut)} au ${_formatDate(fin)}';
     }
-    if (debut != null) return 'Depuis le ${_formatDate(debut)}';
-    return "Jusqu'au ${_formatDate(fin!)}";
+    if (debut.isNotEmpty) return 'Depuis le ${_formatDate(debut)}';
+    return "Jusqu'au ${_formatDate(fin)}";
   }
 
   String _formatDate(String raw) {

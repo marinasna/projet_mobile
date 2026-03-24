@@ -11,7 +11,9 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String name = scan.getStringValue('name', 'Inconnu');
-    final String barcode = scan.getStringValue('barcode', '');
+    final String brandRaw = scan.getStringValue('brands', '');
+    final String brandFallback = scan.getStringValue('brand', 'Marque inconnue');
+    final String displayBrand = brandRaw.isNotEmpty ? brandRaw : brandFallback;
     final String imageUrl = scan.getStringValue('image_url', '');
     final String nutriscore = scan.getStringValue('nutriscore', 'unknown');
 
@@ -37,42 +39,31 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
+        margin: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 100),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              child: imageUrl.isNotEmpty
-                  ? Image.network(
-                      imageUrl,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      width: 100,
-                      height: 100,
-                      color: AppColors.grey1,
-                      child: const Icon(Icons.fastfood, color: Colors.grey),
-                    ),
-            ),
-            Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(
+                  left: 132.0,
+                  top: 16.0,
+                  bottom: 16.0,
+                  right: 16.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -88,11 +79,13 @@ class ProductCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      barcode,
+                      displayBrand,
                       style: const TextStyle(
                         color: AppColors.grey2,
                         fontSize: 13,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     if (nutriscore != 'unknown' && nutriscore.isNotEmpty)
@@ -118,6 +111,26 @@ class ProductCard extends StatelessWidget {
                       ),
                   ],
                 ),
+              ),
+            ),
+            Positioned(
+              top: -20,
+              left: 16,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: imageUrl.isNotEmpty
+                    ? Image.network(
+                        imageUrl,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: 100,
+                        height: 100,
+                        color: AppColors.grey1,
+                        child: const Icon(Icons.fastfood, color: Colors.grey),
+                      ),
               ),
             ),
           ],
